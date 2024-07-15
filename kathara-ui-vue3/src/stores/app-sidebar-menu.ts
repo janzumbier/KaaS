@@ -15,7 +15,7 @@ export const useAppSidebarMenuStore = defineStore({
       },
       {
         url: "/labs",
-        text: "Kathara Labs",
+        text: "Governance Labs",
         icon: "far fa-folder-open",
         children: [
             {

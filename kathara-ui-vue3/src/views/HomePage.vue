@@ -1,6 +1,6 @@
 <template>
   <ul class="breadcrumb">
-    <li class="breadcrumb-item"><a href="#">KaaS</a></li>
+    <li class="breadcrumb-item"><a href="#">Blockchain governance laboratory</a></li>
     <li class="breadcrumb-item active">Current Lab</li>
   </ul>
   <h1 class="page-header">
@@ -41,49 +41,31 @@
               class="btn btn-pink me-1 btn-lg"
               data-bs-toggle="modal"
               data-bs-target="#modalCollisionDomain"
-              id="openCollisionDomainModal"
+              id="openPeerNode"
               :disabled="labState !== LabState.EDITING"
           >
-            Add Collision Domain
+            Add a Peer node
           </button>
           <button
               type="button"
-              class="btn btn-info me-1 btn-lg"
+              class="btn btn-pink me-1 btn-lg"
               data-bs-toggle="modal"
-              data-bs-target="#modalNetworkDevice"
-              id="openNetworkDeviceModal"
+              data-bs-target="#modalCollisionDomain"
+              id="openPeerNode"
               :disabled="labState !== LabState.EDITING"
           >
-            Add Network Device
+            Add a CA node
           </button>
           <button
               type="button"
-              class="btn btn-lg me-1 btn-success"
-              :disabled="!isEdgeEligible(selectedNodes)"
+              class="btn btn-pink me-1 btn-lg"
               data-bs-toggle="modal"
-              data-bs-target="#modalEdge"
-              @click="openEdgeModal(true)"
+              data-bs-target="#modalCollisionDomain"
+              id="openPeerNode"
+              :disabled="labState !== LabState.EDITING"
           >
-            Add link
-          </button>
-          <button
-              type="button"
-              class="btn btn-lg me-1 btn-success"
-              :disabled="labState !== LabState.EDITING || selectedEdges.length === 0"
-              data-bs-toggle="modal"
-              data-bs-target="#modalEdge"
-              @click="openEdgeModal(false)"
-          >
-            Edit link
-          </button>
-          <button
-              type="button"
-              class="btn btn-lg me-1 btn-danger"
-              :disabled="labState !== LabState.EDITING || selectedEdges.length === 0"
-              @click="removeEdge"
-          >
-            Remove link
-          </button>
+            Add an Orderer node
+        </button>
         </div>
         <div class="card-arrow">
           <div class="card-arrow-top-left"></div>
@@ -96,7 +78,7 @@
     <div class="col-lg-6">
       <div class="card mb-4">
         <div class="card-header d-flex align-items-center bg-inverse bg-opacity-10 fw-400">
-          Lab operations
+          Deployment operations
         </div>
         <div class="card-body">
           <button
@@ -105,7 +87,15 @@
               @click="createLab"
               :disabled="labState !== LabState.EDITING"
           >
-            Push Lab
+            Deploy Cas
+          </button>
+          <button
+              type="button"
+              class="btn btn-success me-1 btn-lg"
+              @click="createLab"
+              :disabled="labState !== LabState.EDITING"
+          >
+            Deploy Orderer
           </button>
           <button
               type="button"
@@ -113,15 +103,7 @@
               @click="runLab"
               :disabled="labState !== LabState.CREATED"
           >
-            Run Lab
-          </button>
-          <button
-              type="button"
-              class="btn btn-danger me-1 btn-lg"
-              @click="stopLab"
-              :disabled="labState !== LabState.RUNNING"
-          >
-            Stop Lab
+            Deploy peers
           </button>
         </div>
         <div class="card-arrow">
@@ -192,32 +174,130 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add Collision Domain</h5>
+          <h5 class="modal-title">Add peer</h5>
           <button
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
-            @click="closeCollisionDomainModal"
+            @click="closePeerNodeModal"
           ></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Code:</label>
+            <label class="form-label">MSPID:</label>
             <div class="row row-space-10">
               <div class="col-12">
                 <input
                   class="form-control"
                   type="text"
-                  placeholder="Collision Domain Code (e.g., A, B, C ...)"
-                  v-model="newCdCode"
-                  @keypress="isCollisionDomainName($event)"
+                  placeholder="e.g. Org1MSP"
+                  v-model="mspidmodel"
+                 
                 />
+                <!---  @keypress="isCollisionDomainName($event)" -->
               </div>
             </div>
           </div>
-          <div class="alert alert-muted">
-            <b>Note:</b>
-            Character only. For example: A, B, C, ..., AA, BB, ...
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Name:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. org1-peer0"
+                  v-model="namemodel"
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Capacity:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 5Gi"
+                  v-model="capmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Ca name:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. org1-ca.default"
+                  v-model="canamemodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">hosts:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. peer0-org1.localho.st"
+                  v-model="hostmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Istio port:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 443"
+                  v-model="istioportmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Namespace:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. default"
+                  v-model="namespacemodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -225,16 +305,15 @@
             type="button"
             class="btn btn-outline-default"
             data-bs-dismiss="modal"
-            id="closeModalCollisionDomain"
-            @click="closeCollisionDomainModal"
+            id="closeModalPeerNode"
+            @click="closePeerNodeModal"
           >
             Close
           </button>
           <button
             type="button"
             class="btn btn-outline-theme"
-            :disabled="!isCdCodeEligible(newCdCode)"
-            @click="addEditCollisionDomain"
+            @click="addEditPeerNode"
           >
             Save changes
           </button>
@@ -617,7 +696,7 @@ import {storeToRefs} from "pinia";
 import {useGraphStore} from "@/stores/app-graph";
 import {useLabStore} from "@/stores/app-lab";
 import {Toast} from "bootstrap";
-import type {CollisionDomain, DeviceInterface, NetworkDevice, TopologyModel} from "@/models/graph-models";
+import type {CollisionDomain, DeviceInterface, NetworkDevice, PeerNode, TopologyModel} from "@/models/graph-models";
 
 import * as vNG from "v-network-graph";
 import {VNetworkGraph} from "v-network-graph";
@@ -770,6 +849,20 @@ const eventHandlers: vNG.EventHandlers = {
         document.getElementById("openNetworkDeviceModal")!.click();
       }
 
+      if(labState.value === LabState.EDITING &&
+      nodes.value[clickedNode.node].node_type === "peer_node"){
+        nodeMode.value = false;
+        editedNode.value = clickedNode.node;
+        namemodel.value = nodes.value[clickedNode.node].name;
+        mspidmodel.value = nodes.value[clickedNode.node].mspid;
+        canamemodel.value = nodes.value[clickedNode.node].caname;
+        namespacemodel.value = nodes.value[clickedNode.node].namespace;
+        hostmodel.value = nodes.value[clickedNode.node].hosts;
+        capmodel.value = nodes.value[clickedNode.node].capacity;
+        istioportmodel.value = nodes.value[clickedNode.node].istioport;
+        document.getElementById("openPeerNode")!.click();
+      }
+
       // node web-tty iframe can only be opened when lab is in RUNNING mode.
       if (labState.value === LabState.RUNNING) {
         if (!labStore.checkConsoleIframeVisibility(clickedNode.node)) {
@@ -841,6 +934,13 @@ const newCdCode = ref("");
 const nodeMode = ref(true); // true => add new cd/device, false => edit dbl cd/device
 const editedNode = ref("");
 const deviceName = ref("");
+const mspidmodel = ref("");
+const namemodel = ref("");
+const capmodel = ref("");
+const istioportmodel = ref("");
+const canamemodel = ref("");
+const hostmodel = ref("");
+const namespacemodel = ref("");
 const deviceDockerImage = ref("");
 const deviceStartupScript = ref("");
 const deviceShutdownScript = ref("");
@@ -885,6 +985,36 @@ const isNumber = (e: KeyboardEvent) => {
   else e.preventDefault();
 };
 
+
+const addEditPeerNode = () => {
+  if (nodeMode.value) {
+    const newPeerNode: PeerNode = {
+      node_type: "peer_node",
+      mspid: mspidmodel.value,
+      icon: "collision-domain.png",
+      name: namemodel.value,
+      caname: canamemodel.value,
+      namespace: namespacemodel.value,
+      hosts: hostmodel.value,
+      capacity: capmodel.value,
+      istioport: istioportmodel.value
+    }
+    const nodeId = newPeerNode.name;
+    nodes.value[nodeId] = newPeerNode;
+    document.getElementById("closeModalPeerNode")!.click();
+  } else {
+    nodes.value[editedNode.value].mspid = mspidmodel.value
+    nodes.value[editedNode.value].hosts = hostmodel.value
+    nodes.value[editedNode.value].name = namemodel.value
+    nodes.value[editedNode.value].caname = canamemodel.value
+    nodes.value[editedNode.value].istioport= istioportmodel.value
+    nodes.value[editedNode.value].capacity = capmodel.value
+    nodes.value[editedNode.value].namespace = namespacemodel.value
+    document.getElementById("closeModalPeerNode")!.click();
+  }
+
+}
+
 const addEditCollisionDomain = () => {
   if (nodeMode.value) {
     const newCollisionDomain: CollisionDomain = {
@@ -902,8 +1032,16 @@ const addEditCollisionDomain = () => {
   }
 };
 
-const closeCollisionDomainModal = () => {
-  newCdCode.value = "";
+const closePeerNodeModal = () => {
+  nodeMode.value = true;
+  mspidmodel.value = "";
+  namemodel.value = "";
+  canamemodel.value = "";
+  hostmodel.value = "";
+  namespacemodel.value = "";
+  capmodel.value = "";
+  istioportmodel.value = "";
+  editedNode.value = "";
 };
 
 function deviceIcon(deviceType: string): string {

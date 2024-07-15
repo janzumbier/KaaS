@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import type {KatharaLab, LabDevice, MountedFile, Network} from "@/models/lab-models";
 import {LabState} from "@/models/lab-states";
-import type {CollisionDomain, DeviceInterface, NetworkDevice} from "@/models/graph-models";
+import type {CollisionDomain, PeerNode, DeviceInterface, NetworkDevice} from "@/models/graph-models";
 import {kathara_api} from "@/support/httpCommon";
 import {Convert} from "@/support/convertHelper";
 import type {ApiResponse, Info} from "@/models/api-models";
@@ -20,11 +20,11 @@ export const useLabStore = defineStore("lab", {
     state: () =>
       ({
           katharaLab: {
-            name: "Simple lab",
-            description: "A simple Kathara Lab",
+            name: "Governance lab",
+            description: "A simple blockchain governance lab",
             version: "1.0.0",
-            author: "Thanh Le",
-            email: "thanhledev@gmail.com",
+            author: "Jan",
+            email: "",
             topo: [],
           },
           currentState: LabState.EDITING,
@@ -33,7 +33,7 @@ export const useLabStore = defineStore("lab", {
           visibleConsoleFrames: [],
       } as RootState),
     actions: {
-        convertGraphToTopo(graphNodes: Record<string, CollisionDomain | NetworkDevice>) {
+        convertGraphToTopo(graphNodes: Record<string, CollisionDomain | NetworkDevice | PeerNode>) {
             for (const k in graphNodes) {
                 const node = graphNodes[k];
                 switch (node.node_type) {

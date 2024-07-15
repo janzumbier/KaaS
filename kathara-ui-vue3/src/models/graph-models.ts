@@ -14,6 +14,26 @@ export interface CollisionDomain extends Node {
   // pos_Y: number;
 }
 
+export interface PeerNode extends Node {
+  node_type: string;
+  mspid: string;
+  icon: string;
+  name: string;
+  caname: string;
+  namespace: string;
+  hosts: string;
+  capacity: string;
+  istioport: string;
+}
+
+export interface CaNode extends Node {
+  
+}
+
+export interface OrdererNode extends Node {
+  
+}
+
 export interface NetworkDevice extends Node {
   node_type: string;
   type: string;
@@ -39,7 +59,7 @@ export interface GraphLink extends Edge {
 }
 
 export interface TopologyModel {
-  nodes: Record<string, CollisionDomain | NetworkDevice>;
+  nodes: Record<string, CollisionDomain | NetworkDevice | PeerNode>;
   edges: Record<string, GraphLink>;
   usedCdCodes: string[];
   nextEdgeIndex: number;

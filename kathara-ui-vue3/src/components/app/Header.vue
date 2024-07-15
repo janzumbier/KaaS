@@ -73,16 +73,7 @@ function checkForm(event) {
     </div>
     <!-- END mobile-toggler -->
 
-    <!-- BEGIN brand -->
-    <div class="brand">
-      <RouterLink to="/" class="brand-logo">
-        <span class="brand-img">
-          <span class="brand-img-text text-theme">KE</span>
-        </span>
-        <span class="brand-text">{{ app_title }}</span>
-      </RouterLink>
-    </div>
-    <!-- END brand -->
+    
 
     <!-- BEGIN menu -->
     <div class="menu">
@@ -126,10 +117,8 @@ function checkForm(event) {
           data-bs-display="static"
           class="menu-link"
         >
-          <div class="menu-img online">
-            <img src="/assets/img/user/profile.jpg" alt="Profile" height="60" />
-          </div>
-          <div class="menu-text d-sm-block d-none">admin@uni-bamberg.de</div>
+          
+          <div class="menu-text d-sm-block d-none">admin@unibw.de</div>
         </a>
         <div class="dropdown-menu dropdown-menu-end me-lg-3 fs-11px mt-1">
           <RouterLink
