@@ -27,11 +27,41 @@ export interface PeerNode extends Node {
 }
 
 export interface CaNode extends Node {
+  node_type: string;
+  icon: string;
+  mspid: string;
+  name: string;
+  capacity: string;
+  hosts: string;
+  istioport: string;
+  namespace: string;
   
 }
 
 export interface OrdererNode extends Node {
+  node_type: string;
+  icon: string;
+  name: string;
+  capacity: string;
+  caname: string;
+  hosts: string;
+  istioport: string;
+  endpoint: string;
+  externalport: string;
+  port: string;
   
+}
+
+export interface ChaincodeNode extends Node {
+  node_type: string;
+  icon: string;
+  name: string;
+  version: string;
+  sequence: string;
+  dockerurl: string;
+  language: string;
+  policy: string;
+  namespace: string;
 }
 
 export interface NetworkDevice extends Node {
@@ -59,7 +89,7 @@ export interface GraphLink extends Edge {
 }
 
 export interface TopologyModel {
-  nodes: Record<string, CollisionDomain | NetworkDevice | PeerNode>;
+  nodes: Record<string, CollisionDomain | NetworkDevice | PeerNode | OrdererNode | CaNode | ChaincodeNode>;
   edges: Record<string, GraphLink>;
   usedCdCodes: string[];
   nextEdgeIndex: number;

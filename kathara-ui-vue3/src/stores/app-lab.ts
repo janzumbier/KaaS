@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import type {KatharaLab, LabDevice, MountedFile, Network} from "@/models/lab-models";
 import {LabState} from "@/models/lab-states";
-import type {CollisionDomain, PeerNode, DeviceInterface, NetworkDevice} from "@/models/graph-models";
+import type {CollisionDomain, PeerNode, DeviceInterface, NetworkDevice, OrdererNode, CaNode, ChaincodeNode} from "@/models/graph-models";
 import {kathara_api} from "@/support/httpCommon";
 import {Convert} from "@/support/convertHelper";
 import type {ApiResponse, Info} from "@/models/api-models";
@@ -33,7 +33,7 @@ export const useLabStore = defineStore("lab", {
           visibleConsoleFrames: [],
       } as RootState),
     actions: {
-        convertGraphToTopo(graphNodes: Record<string, CollisionDomain | NetworkDevice | PeerNode>) {
+        convertGraphToTopo(graphNodes: Record<string, CollisionDomain | NetworkDevice | PeerNode | OrdererNode | CaNode | ChaincodeNode>) {
             for (const k in graphNodes) {
                 const node = graphNodes[k];
                 switch (node.node_type) {
@@ -125,6 +125,25 @@ export const useLabStore = defineStore("lab", {
 
             this.labHash = typeof apiResponse.lab_hash !== "undefined" ?
                 apiResponse.lab_hash : "";
+        },
+
+        async getdeploycas(){
+            const message = await kathara_api.get('/startcas')
+        },
+        async getdeploypeers(){
+            const message = await kathara_api.get('/startpeers')
+        },
+        async getdeployorderers(){
+            const message = await kathara_api.get('/startorderers')
+        },
+        async getenrollmspid(){
+            const message = await kathara_api.get('/enrollmspids')
+        },
+        async getcreatechannel(){
+            const message = await kathara_api.get('/createchannel')
+        },
+        async getdeploychaincode(){
+            const message = await kathara_api.get('/deploychaincode')
         },
         async runLab() {
             const resp = await kathara_api

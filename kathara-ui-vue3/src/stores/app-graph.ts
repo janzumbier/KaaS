@@ -1,9 +1,9 @@
 import {defineStore} from "pinia";
 import type {Layouts} from "v-network-graph";
-import type {CollisionDomain, GraphLink, NetworkDevice, PeerNode, TopologyModel} from "@/models/graph-models";
+import type {CaNode, ChaincodeNode, CollisionDomain, GraphLink, NetworkDevice, OrdererNode, PeerNode, TopologyModel} from "@/models/graph-models";
 
 export type RootState = {
-  nodes: Record<string, CollisionDomain | NetworkDevice | PeerNode>;
+  nodes: Record<string, CollisionDomain | NetworkDevice | PeerNode | OrdererNode | CaNode | ChaincodeNode>;
   edges: Record<string, GraphLink>;
   usedCdCodes: string[];
   nextEdgeIndex: number;

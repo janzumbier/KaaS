@@ -33,38 +33,44 @@
     <div class="col-lg-6">
       <div class="card mb-4">
         <div class="card-header d-flex align-items-center bg-inverse bg-opacity-10 fw-400">
-          Graph operations
+          Avilable nodes
         </div>
         <div class="card-body">
           <button
               type="button"
               class="btn btn-pink me-1 btn-lg"
               data-bs-toggle="modal"
-              data-bs-target="#modalCollisionDomain"
+              data-bs-target="#modalPeerNode"
               id="openPeerNode"
-              :disabled="labState !== LabState.EDITING"
           >
-            Add a Peer node
+            Add a peer node
           </button>
           <button
               type="button"
               class="btn btn-pink me-1 btn-lg"
               data-bs-toggle="modal"
-              data-bs-target="#modalCollisionDomain"
-              id="openPeerNode"
-              :disabled="labState !== LabState.EDITING"
+              data-bs-target="#modalCaNode"
+              id="openCaNode"
           >
-            Add a CA node
+            Add a ca node
           </button>
           <button
               type="button"
               class="btn btn-pink me-1 btn-lg"
               data-bs-toggle="modal"
-              data-bs-target="#modalCollisionDomain"
-              id="openPeerNode"
-              :disabled="labState !== LabState.EDITING"
+              data-bs-target="#modalOrdererNode"
+              id="openOrdererNode"
           >
-            Add an Orderer node
+            Add an orderer node
+        </button>
+        <button
+              type="button"
+              class="btn btn-pink me-1 btn-lg"
+              data-bs-toggle="modal"
+              data-bs-target="#modalChaincodeNode"
+              id="openChaincodeNode"
+          >
+            Add a chaincode
         </button>
         </div>
         <div class="card-arrow">
@@ -84,26 +90,44 @@
           <button
               type="button"
               class="btn btn-success me-1 btn-lg"
-              @click="createLab"
-              :disabled="labState !== LabState.EDITING"
+              @click="deployCas"
           >
-            Deploy Cas
+            Deploy cas
           </button>
           <button
               type="button"
               class="btn btn-success me-1 btn-lg"
-              @click="createLab"
-              :disabled="labState !== LabState.EDITING"
+              @click="deployOrderers"
           >
-            Deploy Orderer
+            Deploy orderer
+          </button>
+          <button
+              type="button"
+              class="btn btn-success me-1 btn-lg"
+              @click="deployPeers"
+          >
+            Deploy peers
           </button>
           <button
               type="button"
               class="btn btn-primary me-1 btn-lg"
-              @click="runLab"
-              :disabled="labState !== LabState.CREATED"
+              @click="enrollMSPIDS"
           >
-            Deploy peers
+            Enroll MSPIDs
+          </button>
+          <button
+              type="button"
+              class="btn btn-primary me-1 btn-lg"
+              @click="createChannel"
+          >
+            Create channel
+          </button>
+          <button
+              type="button"
+              class="btn btn-primary me-1 btn-lg"
+              @click="deployChaincode"
+          >
+            Deploy chaincode
           </button>
         </div>
         <div class="card-arrow">
@@ -169,8 +193,8 @@
       />
     </template>
   </v-network-graph>
-  <!-- BEGIN #modalCollisionDomain -->
-  <div class="modal fade" id="modalCollisionDomain">
+  <!-- BEGIN #PeerNode -->
+  <div class="modal fade" id="modalPeerNode">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -321,8 +345,468 @@
       </div>
     </div>
   </div>
-  <!-- END #modalCollisionDomain -->
-  <!-- BEGIN #modalNetworkDevice -->
+
+  <!-- begin #modalCaNode -->
+  <div class="modal fade" id="modalCaNode">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add CA</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            @click="closeCaNodeModal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">MSPID:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. Org1MSP"
+                  v-model="camspidmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Name:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. org1-ca"
+                  v-model="cacanamemodel"
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Capacity:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 1Gi"
+                  v-model="cacapmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">hosts:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. org1-ca.default"
+                  v-model="cahostmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Istio port:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 443"
+                  v-model="caistioportmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Namespace:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. default"
+                  v-model="canamespacemodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-default"
+            data-bs-dismiss="modal"
+            id="closeModalCaNode"
+            @click="closeCaNodeModal"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-theme"
+            @click="addEditCaNode"
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- begin #modalOrdererNode -->
+  <div class="modal fade" id="modalOrdererNode">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Orderer</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            @click="closeOrdererNodeModal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">MSPID:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. Org1MSP"
+                  v-model="orderermspidmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Name:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. ord-node1"
+                  v-model="orderernamemodel"
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Capacity:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 2Gi"
+                  v-model="orderercapmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">caname:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. org1-ca.default"
+                  v-model="ordererhostmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Istio port:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 443"
+                  v-model="ordereristioportmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Endpoint:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 443"
+                  v-model="ordererendpointmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">External port:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 443"
+                  v-model="ordererexternalportmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Port:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 443"
+                  v-model="ordererportmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Namespace:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. default"
+                  v-model="orderernamespacemodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-default"
+            data-bs-dismiss="modal"
+            id="closeModalOrdererNode"
+            @click="closeOrdererNodeModal"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-theme"
+            @click="addEditOrdererNode"
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- begin #modalCaNode -->
+  <div class="modal fade" id="modalChaincodeNode">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Chaincode</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            @click="closeChaincodeNodeModal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Name:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. token"
+                  v-model="ccnamemodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">DockerUrl:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. janzumbier/tokencontract"
+                  v-model="ccdockerurlmodel"
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Policy:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. OR('ORG1MSP')"
+                  v-model="ccpolicymodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Version</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 1.0"
+                  v-model="ccversionmodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Sequence:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. 1"
+                  v-model="ccsequencemodel"
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Namespace:</label>
+            <div class="row row-space-10">
+              <div class="col-12">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="e.g. default"
+                  v-model="ccnamespacemodel"
+                 
+                />
+                <!---  @keypress="isCollisionDomainName($event)" -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-default"
+            data-bs-dismiss="modal"
+            id="closeModalChaincodeNode"
+            @click="closeChaincodeNodeModal"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-theme"
+            @click="addEditChaincodeNode"
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+
   <div class="modal fade" id="modalNetworkDevice">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -696,7 +1180,7 @@ import {storeToRefs} from "pinia";
 import {useGraphStore} from "@/stores/app-graph";
 import {useLabStore} from "@/stores/app-lab";
 import {Toast} from "bootstrap";
-import type {CollisionDomain, DeviceInterface, NetworkDevice, PeerNode, TopologyModel} from "@/models/graph-models";
+import type {CaNode, ChaincodeNode, CollisionDomain, DeviceInterface, NetworkDevice, OrdererNode, PeerNode, TopologyModel} from "@/models/graph-models";
 
 import * as vNG from "v-network-graph";
 import {VNetworkGraph} from "v-network-graph";
@@ -863,6 +1347,52 @@ const eventHandlers: vNG.EventHandlers = {
         document.getElementById("openPeerNode")!.click();
       }
 
+      if(labState.value === LabState.EDITING &&
+      nodes.value[clickedNode.node].node_type === "ca_node"){
+        nodeMode.value = false;
+        editedNode.value = clickedNode.node;
+        camspidmodel.value = nodes.value[clickedNode.node].mspid;
+        cahostmodel.value  = nodes.value[clickedNode.node].hosts; 
+        cacanamemodel.value = nodes.value[clickedNode.node].name; 
+        caistioportmodel.value = nodes.value[clickedNode.node].istioport;
+        cacapmodel.value = nodes.value[clickedNode.node].capacity;
+        canamespacemodel.value = nodes.value[clickedNode.node].namespace;
+        document.getElementById("openCaNode")!.click();
+      }
+
+      if(labState.value === LabState.EDITING &&
+      nodes.value[clickedNode.node].node_type === "orderer_node"){
+        nodeMode.value = false;
+        editedNode.value = clickedNode.node;
+        orderermspidmodel.value = nodes.value[clickedNode.node].mspid; 
+        ordererhostmodel.value = nodes.value[clickedNode.node].hosts;
+        orderernamemodel.value = nodes.value[clickedNode.node].name
+        orderercanamemodel.value = nodes.value[clickedNode.node].caname 
+        ordereristioportmodel.value = nodes.value[clickedNode.node].istioport
+        orderercapmodel.value = nodes.value[clickedNode.node].capacity
+        orderernamespacemodel.value = nodes.value[clickedNode.node].namespace
+        ordererportmodel.value = nodes.value[clickedNode.node].port
+        ordererexternalportmodel.value = nodes.value[clickedNode.node].externalport
+        ordererendpointmodel.value = nodes.value[clickedNode.node].endpoint
+        document.getElementById("openOrdererNode")!.click();
+      }
+
+      if(labState.value === LabState.EDITING &&
+      nodes.value[clickedNode.node].node_type === "chaincode_node"){
+        nodeMode.value = false;
+        editedNode.value = clickedNode.node;
+        ccnamemodel.value = nodes.value[clickedNode.node].name;
+        ccdockerurlmodel.value = nodes.value[clickedNode.node].dockerurl;
+        ccversionmodel.value = nodes.value[clickedNode.node].version;
+        ccsequencemodel.value = nodes.value[clickedNode.node].sequence;
+        cclanguagemodel.value = nodes.value[clickedNode.node].language;
+        ccpolicymodel.value = nodes.value[clickedNode.node].policy;
+        ccnamespacemodel.value = nodes.value[clickedNode.node].namespace;
+        document.getElementById("openChaincodeNode")!.click(); 
+      }
+
+
+
       // node web-tty iframe can only be opened when lab is in RUNNING mode.
       if (labState.value === LabState.RUNNING) {
         if (!labStore.checkConsoleIframeVisibility(clickedNode.node)) {
@@ -934,6 +1464,7 @@ const newCdCode = ref("");
 const nodeMode = ref(true); // true => add new cd/device, false => edit dbl cd/device
 const editedNode = ref("");
 const deviceName = ref("");
+//
 const mspidmodel = ref("");
 const namemodel = ref("");
 const capmodel = ref("");
@@ -941,6 +1472,39 @@ const istioportmodel = ref("");
 const canamemodel = ref("");
 const hostmodel = ref("");
 const namespacemodel = ref("");
+//
+const camspidmodel = ref("");
+const cacanamemodel = ref("");
+const caistioportmodel = ref("");
+const cacapmodel = ref("");
+const cahostmodel = ref("");
+const canamespacemodel = ref("");
+//
+
+const orderernamemodel = ref("");
+const orderermspidmodel = ref("");
+const orderercapmodel = ref("");
+const ordererhostmodel = ref("");
+const ordereristioportmodel = ref("");
+const ordererendpointmodel = ref("");
+const orderernamespacemodel = ref("");
+const ordererportmodel = ref("");
+const ordererexternalportmodel = ref("");
+const orderercanamemodel = ref("");
+
+//
+
+const ccnamemodel = ref("");
+const ccdockerurlmodel = ref("");
+const ccnamespacemodel = ref("");
+const ccpolicymodel = ref("");
+const ccversionmodel = ref("");
+const ccsequencemodel = ref("");
+const cclanguagemodel = ref("");
+
+
+
+
 const deviceDockerImage = ref("");
 const deviceStartupScript = ref("");
 const deviceShutdownScript = ref("");
@@ -984,6 +1548,136 @@ const isNumber = (e: KeyboardEvent) => {
   if (/^[0-9]+$/.test(char)) return true;
   else e.preventDefault();
 };
+
+
+const addEditChaincodeNode = () => {
+  if(nodeMode.value) {
+    const newChaincodeNode: ChaincodeNode = {
+      node_type: "chaincode_node",
+      icon: "collision-domain.png",
+      name: ccnamemodel.value,
+      version: ccversionmodel.value,
+      sequence: ccsequencemodel.value,
+      dockerurl: ccdockerurlmodel.value,
+      language: cclanguagemodel.value,
+      policy: ccpolicymodel.value,
+      namespace: ccnamespacemodel.value
+    }
+    const nodeId = newChaincodeNode.name;
+    nodes.value[nodeId] = newChaincodeNode;
+    document.getElementById("closeModalChaincodeNode")!.click();
+  } else {
+    nodes.value[editedNode.value].name = ccnamemodel.value
+    nodes.value[editedNode.value].dockerurl = ccdockerurlmodel.value
+    nodes.value[editedNode.value].version = ccversionmodel.value
+    nodes.value[editedNode.value].sequence = ccsequencemodel.value
+    nodes.value[editedNode.value].language= cclanguagemodel.value
+    nodes.value[editedNode.value].policy = ccpolicymodel.value
+    nodes.value[editedNode.value].namespace = ccnamespacemodel.value
+    document.getElementById("closeModalChaincodeNode")!.click();
+  }
+}
+
+const closeChaincodeNodeModal = () => {
+  nodeMode.value = true;
+  ccnamemodel.value = "";
+  ccdockerurlmodel.value = "";
+  ccsequencemodel.value = "";
+  ccversionmodel.value = "";
+  cclanguagemodel.value = "";
+  ccpolicymodel.value = "";
+  ccnamespacemodel.value = "";
+  editedNode.value = "";
+};
+
+const addEditOrdererNode = () => {
+  if(nodeMode.value) {
+    const newOrdererNode: OrdererNode = {
+      node_type: "orderer_node",
+      mspid: orderermspidmodel.value,
+      icon: "collision-domain.png",
+      name: orderernamemodel.value,
+      caname: orderercanamemodel.value,
+      namespace: orderernamespacemodel.value,
+      hosts: ordererhostmodel.value,
+      capacity: orderercapmodel.value,
+      istioport: ordereristioportmodel.value,
+      port: ordererportmodel.value,
+      endpoint: ordererendpointmodel.value,
+      externalport: ordererexternalportmodel.value
+    }
+    const nodeId = newOrdererNode.name;
+    nodes.value[nodeId] = newOrdererNode;
+    document.getElementById("closeModalOrdererNode")!.click();
+  } else {
+
+    nodes.value[editedNode.value].mspid = orderermspidmodel.value
+    nodes.value[editedNode.value].hosts = ordererhostmodel.value
+    nodes.value[editedNode.value].name = orderernamemodel.value
+    nodes.value[editedNode.value].caname = orderercanamemodel.value
+    nodes.value[editedNode.value].istioport= ordereristioportmodel.value
+    nodes.value[editedNode.value].capacity = orderercapmodel.value
+    nodes.value[editedNode.value].namespace = orderernamespacemodel.value
+    nodes.value[editedNode.value].port = ordererportmodel.value
+    nodes.value[editedNode.value].externalport = ordererexternalportmodel.value
+    nodes.value[editedNode.value].endpoint = ordererendpointmodel.value
+    document.getElementById("closeModalOrdererNode")!.click();
+  }
+}
+
+const closeOrdererNodeModal = () => {
+  nodeMode.value = true;
+  orderermspidmodel.value = "";
+  orderernamemodel.value = "";
+  orderercanamemodel.value = "";
+  orderernamespacemodel.value = "";
+  ordererhostmodel.value = "";
+  orderercapmodel.value= "";
+  ordereristioportmodel.value = "";
+  ordererportmodel.value = "";
+  ordererendpointmodel.value = "";
+  ordererexternalportmodel.value = "";
+  editedNode.value = "";
+};
+
+const addEditCaNode = () => {
+  if(nodeMode.value) {
+    const newCaNode: CaNode = {
+      node_type: "ca_node",
+      mspid: camspidmodel.value,
+      icon: "collision-domain.png",
+      name: cacanamemodel.value,
+      namespace: canamespacemodel.value,
+      hosts: cahostmodel.value,
+      capacity: cacapmodel.value,
+      istioport: caistioportmodel.value
+    }
+    const nodeId = newCaNode.name;
+    nodes.value[nodeId] = newCaNode;
+    document.getElementById("closeModalCaNode")!.click();
+  } else {
+
+    nodes.value[editedNode.value].mspid = camspidmodel.value
+    nodes.value[editedNode.value].hosts = cahostmodel.value
+    nodes.value[editedNode.value].name = cacanamemodel.value
+    nodes.value[editedNode.value].istioport= caistioportmodel.value
+    nodes.value[editedNode.value].capacity = cacapmodel.value
+    nodes.value[editedNode.value].namespace = canamespacemodel.value
+    document.getElementById("closeModalCaNode")!.click();
+  }
+}
+
+const closeCaNodeModal = () => {
+  nodeMode.value = true;
+  camspidmodel.value = "";
+  cacanamemodel.value = "";
+  cahostmodel.value = "";
+  canamespacemodel.value = "";
+  cacapmodel.value = "";
+  caistioportmodel.value = "";
+  editedNode.value = "";
+};
+
 
 
 const addEditPeerNode = () => {
@@ -1349,6 +2043,45 @@ const createLab = async () => {
 const runLab = async () => {
   console.log("RUNNING lab");
   await labStore.runLab();
+}
+
+const deployCas = async () => {
+  showToast("Starting CAs deployment", 0);
+  await labStore.getdeploycas();
+  showToast("CAs deployed", 0);
+
+}
+
+const deployPeers = async () => {
+  showToast("Starting peer deployment", 0);
+  await labStore.getdeploypeers();
+  showToast("Peers deployed", 0);
+  console.log("finished");
+}
+
+const deployOrderers = async () => {
+  showToast("Starting Orderer deployment", 0);
+  await labStore.getdeployorderers();
+  showToast("Orderers deployed", 0);
+  console.log("finished");
+}
+
+const enrollMSPIDS = async () => {
+  showToast("Enrolling MSPID", 0);
+  await labStore.getenrollmspid();
+  showToast("MSPIDs enrolled", 0);
+}
+
+const createChannel = async () => {
+  showToast("Creating channel", 0);
+  await labStore.getcreatechannel();
+  showToast("Channel created", 0);
+}
+
+const deployChaincode = async () => {
+  showToast("Starting chaincode deployment", 0);
+  await labStore.getdeploychaincode();
+  showToast("Chaincode deployed", 0);
 }
 
 const stopLab = async () => {
